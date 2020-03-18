@@ -1,13 +1,20 @@
 package com.example.patientfeedback;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,12 +41,13 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(i);
                 }
                 else{
-                    //popup_toast("Wrong Credentials");
-                    Intent i = new Intent(getApplicationContext(), Main2Activity.class);
-                    startActivity(i);
+                    popup_toast("Wrong Credentials");
+                    //Intent i = new Intent(getApplicationContext(), Main2Activity.class);
+                    //startActivity(i);
                 }
             }
         });
+
     }
 
     private void popup_toast(String msg) {
