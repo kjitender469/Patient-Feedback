@@ -4,37 +4,20 @@ package com.example.patientfeedback;
 * Patient Information
 * */
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
-import android.app.Application;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Collections;
-import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
 
@@ -47,10 +30,6 @@ public class Main2Activity extends AppCompatActivity {
     String subject_initial, subject_id, subject_dob, subject_family_members, subject_caregiver, subject_gender, subject_education,
             subject_employment_status, subject_smoking_status, subject_alcohol_consumption;
 
-    public String data_array[];
-    String[] mobileArray = {"Android","IPhone","WindowsMobile","Blackberry",
-            "WebOS","Ubuntu","Windows7","Max OS X"};
-
     String subject_all_data = "";
 
     @Override
@@ -61,7 +40,6 @@ public class Main2Activity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         //setActionBar(myToolbar);
-
 
         et_subject_initial = (EditText) findViewById(R.id.edit_text_subject_initial);
         et_subject_id = (EditText) findViewById(R.id.edit_text_subject_id);
@@ -94,9 +72,9 @@ public class Main2Activity extends AppCompatActivity {
         bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(valiadte()) {
-                    getSubjectInfo();
-                    new saveData().execute();
+                if(validate()) {
+                    // Dialog box for confirmation
+                    openDialogBox();
                 }
             }
         });
@@ -111,12 +89,40 @@ public class Main2Activity extends AppCompatActivity {
         bt_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //setContentView(R.layout.subject_complete_info);
             }
         });
     }
 
-    private boolean valiadte() {
+    private void openDialogBox() {
+        // get alert_dialog.xml view
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Main2Activity.this);
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Do you want to save?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // get user input and set it to result
+                        getSubjectInfo();
+                        new saveData().execute();
+                    }
+                })
+                .setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //showToast("Delete Pressed");
+                                dialog.cancel();
+                            }
+                        });
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
+    }
+
+    private boolean validate() {
         if(et_subject_initial.getText().toString().trim().isEmpty()){
             et_subject_initial.setError("This field can not be empty");
             et_subject_initial.requestFocus();
@@ -164,29 +170,51 @@ public class Main2Activity extends AppCompatActivity {
         if (id == R.id.view_entries) {
             showToast("View Entries");
             startActivity(new Intent(getApplicationContext(), ViewSubjectData.class));
-//            setContentView(R.layout.list_view_main);
-//            bt_list_view = (Button)findViewById(R.id.button_list_view);
-//
-//            bt_list_view.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    //Intent intent = new Intent(getApplicationContext(), );
-//                    setContentView(R.layout.activity_main2);
-//                    Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-//                    setSupportActionBar(myToolbar);
-//                }
-//            });
-//            String data[] = {subject_initial};
-//            ArrayAdapter adapter = new ArrayAdapter<String>(getApplicationContext(),
-//                    R.layout.list_view, data);
-//            ListView lv = (ListView)findViewById(R.id.list_view);
-//            //adapter.add(subject_initial);
-//            //adapter.notifyDataSetChanged();
-//            lv.setAdapter(adapter);
+            return true;
+        }
+        if(id == R.id.clear_all_data)
+        {
+            openDialogClearAll();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openDialogClearAll() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Main2Activity.this);
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Do you want to delete all saved data?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // clear alldatabase
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                DataBaseClient.getInstance(getApplicationContext()).getAppDataBase().userDao().deleteAllData();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showToast("Database Cleared Successfully");
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+                })
+                .setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //showToast("Delete Pressed");
+                                dialog.cancel();
+                            }
+                        });
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
     }
 
     public void getSubjectInfo(){
@@ -195,9 +223,9 @@ public class Main2Activity extends AppCompatActivity {
         subject_dob = et_dob.getText().toString();
         subject_family_members = et_members.getText().toString();
         subject_caregiver = et_caregiver.getText().toString();
-        subject_all_data = "*"+","+subject_initial+","+subject_id+","+subject_dob+","+subject_family_members
-                +","+subject_caregiver+","+subject_gender+","+subject_education+","+subject_employment_status
-                +","+subject_smoking_status+","+subject_alcohol_consumption+"#";
+        subject_all_data = "*"+subject_initial+","+subject_id+","+subject_dob+","+subject_gender+","+subject_education+","
+                +subject_employment_status+","+subject_smoking_status+","+subject_alcohol_consumption+","+subject_family_members
+                +","+subject_caregiver+",";
         //showToast(subject_final_data);
         //data_array = new String[]{subject_initial, subject_id, subject_dob, subject_family_members, subject_caregiver};
     }
@@ -325,7 +353,7 @@ public class Main2Activity extends AppCompatActivity {
                 break;
             case R.id.radioButton_Occasional_drinker:
                 if(checked){
-                    subject_alcohol_consumption = "Occasional Alcoholic";
+                    subject_alcohol_consumption = "Occasional Drinker";
                     showToast("Occasional Drinker");
                 }
                 break;
@@ -385,6 +413,8 @@ public class Main2Activity extends AppCompatActivity {
                 @Override
                 public void run() {
                     showToast("Saved Successfully");
+                    startActivity(getIntent());
+                    finish();
                 }
             });
         }
