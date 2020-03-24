@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +20,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-public class Main2Activity extends AppCompatActivity {
+import java.util.List;
+
+public class Main2Activity extends AppCompatActivity implements AsyncResponse{
 
     EditText et_subject_initial, et_subject_id, et_dob, et_members, et_caregiver;
     RadioButton rb_male, rb_female, rb_illiterate, rb_primary, rb_secondary, rb_graduate, rb_post_graduate, rb_unemployed, rb_self_employed,
@@ -32,6 +35,11 @@ public class Main2Activity extends AppCompatActivity {
 
     String subject_all_data = "";
 
+    List<String> subjectID_FromDB_List;
+
+    int subjectID_count;
+    boolean isDatabaseEmpty = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +50,7 @@ public class Main2Activity extends AppCompatActivity {
         //setActionBar(myToolbar);
 
         et_subject_initial = (EditText) findViewById(R.id.edit_text_subject_initial);
-        et_subject_id = (EditText) findViewById(R.id.edit_text_subject_id);
+        //et_subject_id = (EditText) findViewById(R.id.edit_text_subject_id);
         et_dob = (EditText) findViewById(R.id.edit_text_dob);
         et_members = (EditText) findViewById(R.id.edit_text_members);
         et_caregiver = (EditText) findViewById(R.id.edit_text_caregiver);
@@ -69,6 +77,8 @@ public class Main2Activity extends AppCompatActivity {
         bt_save = (Button)findViewById(R.id.button_save);
         bt_submit = (Button)findViewById(R.id.button_submit);
 
+        new GetDataFromDB().execute();
+
         bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +100,10 @@ public class Main2Activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //setContentView(R.layout.subject_complete_info);
+                User user = new User();
+                ExportDataExcel exportDataExcel = new ExportDataExcel(user, getApplicationContext());
+                exportDataExcel.exportExcelFile();
+                //exportDataExcel.saveToExternalStorage("");
             }
         });
     }
@@ -97,7 +111,6 @@ public class Main2Activity extends AppCompatActivity {
     private void openDialogBox() {
         // get alert_dialog.xml view
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Main2Activity.this);
-
         // set dialog message
         alertDialogBuilder
                 .setMessage("Do you want to save?")
@@ -122,17 +135,43 @@ public class Main2Activity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    private void getSubjectID_FromDB() {
+        //new GetDataFromDB().execute();
+    }
+
+
+    public void getSubjectInfo(){
+        subject_initial = et_subject_initial.getText().toString();
+        //subject_id = et_subject_id.getText().toString();
+        Log.wtf("Debug","This log info is just to provide some delay --> subject_initial is : "+subject_initial);
+        subject_dob = et_dob.getText().toString();
+        Log.wtf("Debug","This log info is just to provide some delay --> subject_dob is : "+subject_dob);
+        subject_family_members = et_members.getText().toString();
+        Log.wtf("Debug","This log info is just to provide some delay --> subject_family is : "+subject_family_members);
+        subject_caregiver = et_caregiver.getText().toString();
+        Log.wtf("Debug","This log info is just to provide some delay --> subject_caregiver is : "+subject_caregiver);
+        Log.wtf("debug","debug App subject_id before ID count : "+subject_id);
+        Log.wtf("debug","debug App subjectID_count before ID count : "+subjectID_count);
+        subject_id = String.valueOf(subjectID_count+1);
+        Log.wtf("debug","debug App subject_id after ID count : "+subject_id);
+        subject_all_data = ","+subject_id+","+subject_initial+","+subject_dob+","+subject_gender+","+subject_education+","
+                +subject_employment_status+","+subject_smoking_status+","+subject_alcohol_consumption+","+subject_family_members
+                +","+subject_caregiver+",";
+        //showToast(subject_final_data);
+        //data_array = new String[]{subject_initial, subject_id, subject_dob, subject_family_members, subject_caregiver};
+    }
+
     private boolean validate() {
         if(et_subject_initial.getText().toString().trim().isEmpty()){
             et_subject_initial.setError("This field can not be empty");
             et_subject_initial.requestFocus();
             return false;
         }
-        else if(et_subject_id.getText().toString().trim().isEmpty()){
-            et_subject_id.setError("This field can not be empty");
-            et_subject_id.requestFocus();
-            return false;
-        }
+//        else if(et_subject_id.getText().toString().trim().isEmpty()){
+//            et_subject_id.setError("This field can not be empty");
+//            et_subject_id.requestFocus();
+//            return false;
+//        }
         else if(et_dob.getText().toString().trim().isEmpty()){
             et_dob.setError("This field can not be empty");
             et_dob.requestFocus();
@@ -185,7 +224,7 @@ public class Main2Activity extends AppCompatActivity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Main2Activity.this);
         // set dialog message
         alertDialogBuilder
-                .setMessage("Do you want to delete all saved data?")
+                .setMessage("Delete all saved data?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -217,18 +256,6 @@ public class Main2Activity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void getSubjectInfo(){
-        subject_initial = et_subject_initial.getText().toString();
-        subject_id = et_subject_id.getText().toString();
-        subject_dob = et_dob.getText().toString();
-        subject_family_members = et_members.getText().toString();
-        subject_caregiver = et_caregiver.getText().toString();
-        subject_all_data = "*"+subject_initial+","+subject_id+","+subject_dob+","+subject_gender+","+subject_education+","
-                +subject_employment_status+","+subject_smoking_status+","+subject_alcohol_consumption+","+subject_family_members
-                +","+subject_caregiver+",";
-        //showToast(subject_final_data);
-        //data_array = new String[]{subject_initial, subject_id, subject_dob, subject_family_members, subject_caregiver};
-    }
     public void onRadioButtonClicked(View view) {
         // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
@@ -372,25 +399,18 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        //Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(myToolbar);
-        super.onStart();
-    }
+    public void processFinish(List<User> users) {
+        String data = users.get(users.size()-1).getSubjectData();
+        String sub_string = data.substring(1);
+        int commaIndex = sub_string.indexOf(',');
+        Log.wtf("debug","debug App : "+data);
+        Log.wtf("debug","debug App sub_string : "+sub_string);
+        Log.wtf("debug","debug App data length : "+data.length());
+        Log.wtf("debug","debug App commaIndex : "+commaIndex);
+        //Log.wtf("debug","debug App sub string is : "+data.substring(1, commaIndex));
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    public void recreate() {
-        super.recreate();
+        subjectID_count = Integer.parseInt(sub_string.substring(0,commaIndex));
+        Log.wtf("debug","debug App ID count : "+subjectID_count);
     }
 
     class saveData extends AsyncTask<Void, Void, Void>{
@@ -417,6 +437,29 @@ public class Main2Activity extends AppCompatActivity {
                     finish();
                 }
             });
+        }
+    }
+
+    class GetDataFromDB extends AsyncTask<Void, Void, List<User>>{
+
+        @Override
+        protected List<User> doInBackground(Void... voids) {
+            List<User> subjectID = DataBaseClient.getInstance(getApplicationContext()).getAppDataBase().userDao().getAllData();
+            return subjectID;
+        }
+
+        @Override
+        protected void onPostExecute(List<User> users) {
+            super.onPostExecute(users);
+            if(users.size() != 0) {
+                isDatabaseEmpty = false;
+                Log.wtf("debug","debug App (inside if) : "+users.size());
+                processFinish(users);
+            }
+            else{
+                isDatabaseEmpty = true;
+                Log.wtf("debug","debug App (inside else) : "+users.size());
+            }
         }
     }
 }

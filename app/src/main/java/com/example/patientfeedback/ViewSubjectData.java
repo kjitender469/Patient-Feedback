@@ -2,6 +2,8 @@ package com.example.patientfeedback;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewSubjectData extends AppCompatActivity implements AsyncResponse{
@@ -31,94 +34,99 @@ public class ViewSubjectData extends AppCompatActivity implements AsyncResponse{
     Button bt_back;
 
     AsyncResponse asyncResponse = null;
+    RecyclerView recyclerView;
 
     int uid_global[];
-    String subjectID[];
-    String completeDataFrom_DB[];
+    List<String> subjectID, completeDataFrom_DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_subject_data);
 
-        bt_list_view = findViewById(R.id.button_lv);
-        lv_subject_data = findViewById(R.id.listView_SubjectData);
+//        bt_list_view = findViewById(R.id.button_lv);
+//        lv_subject_data = findViewById(R.id.listView_SubjectData);
 
+        recyclerView = findViewById(R.id.recycleView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         asyncResponse = this;
         new getSavedData().execute();
 
         // going back to the main activity i.e. Patient Information
-        bt_list_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Main2Activity.class));
-            }
-        });
+//        bt_list_view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getApplicationContext(), Main2Activity.class));
+//            }
+//        });
     }
 
     @Override
     public void processFinish(List<User> users) {
         // here we will receiving the data from background thread onPostExecute() method in our main UI thread
-        subjectID = new String[users.size()];
         uid_global = new int[users.size()];
-        completeDataFrom_DB = new String[users.size()];
+        subjectID = new ArrayList<>();
+        completeDataFrom_DB = new ArrayList<>();
         for(int i = 0; i < users.size(); i++){
             uid_global[i] = users.get(i).uid;
-            subjectID[i] = "Subject ID : "+users.get(i).getSubjectID();
-            completeDataFrom_DB[i] = users.get(i).getSubjectData();
+            subjectID.add("Subject ID : "+users.get(i).getSubjectID());
+            completeDataFrom_DB.add(users.get(i).getSubjectData());
         }
 
+        RecyclerView.Adapter adapter = new RecyclerViewAdapter(subjectID, completeDataFrom_DB, uid_global,this);
+        recyclerView.setAdapter(adapter);
+
         // populate the subject IDs in a list  view
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, subjectID);
-        lv_subject_data.setAdapter(arrayAdapter);
-
-        lv_subject_data.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                updateDeleteDialogBox(Math.toIntExact(parent.getItemIdAtPosition(position)));
-            }
-        });
+//        ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, subjectID);
+//        lv_subject_data.setAdapter(arrayAdapter);
+//
+//        lv_subject_data.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                updateDeleteDialogBox(Math.toIntExact(parent.getItemIdAtPosition(position)));
+//            }
+//        });
     }
 
-    private void updateDeleteDialogBox(int id) {
-        final int position = id;
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ViewSubjectData.this);
-        // set dialog message
-        alertDialogBuilder
-                .setMessage("Do you want View or Delete entry?")
-                .setCancelable(false)
-                .setPositiveButton("View", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        String subjectData = subjectDataByUID(position);
-                        updateTextViews(subjectData);
-                    }
-                })
-                .setNegativeButton("Delete",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // Delete the specific entry from database
-                                        User user = new User();
-                                        user.uid = uid_global[position];
-                                        DataBaseClient.getInstance(getApplicationContext()).getAppDataBase().userDao().delete(user);
-                                    }
-                                }).start();
-                                dialog.cancel();
-                            }
-                        });
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        // show it
-        alertDialog.show();
-    }
-
-    private String subjectDataByUID(int index) {
-        String subjectInfo = completeDataFrom_DB[index];
-        return subjectInfo;
-    }
+//    private void updateDeleteDialogBox(int id) {
+//        final int position = id;
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ViewSubjectData.this);
+//        // set dialog message
+//        alertDialogBuilder
+//                .setMessage("Do you want View or Delete entry?")
+//                .setCancelable(false)
+//                .setPositiveButton("View", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        String subjectData = subjectDataByUID(position);
+//                        updateTextViews(subjectData);
+//                    }
+//                })
+//                .setNegativeButton("Delete",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                new Thread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        // Delete the specific entry from database
+//                                        User user = new User();
+//                                        user.uid = uid_global[position];
+//                                        DataBaseClient.getInstance(getApplicationContext()).getAppDataBase().userDao().delete(user);
+//                                    }
+//                                }).start();
+//                                dialog.cancel();
+//                            }
+//                        });
+//        // create alert dialog
+//        AlertDialog alertDialog = alertDialogBuilder.create();
+//        // show it
+//        alertDialog.show();
+//    }
+//
+//    private String subjectDataByUID(int index) {
+//        String subjectInfo = completeDataFrom_DB[index];
+//        return subjectInfo;
+//    }
 
     private void updateTextViews(String data) {
 
@@ -126,18 +134,18 @@ public class ViewSubjectData extends AppCompatActivity implements AsyncResponse{
         /*
          * These text view ids are for viewing subject complete info in a seprate layout
          * */
-        tv_subject_initial = findViewById(R.id.textView_sub_initial);
-        tv_subject_id = findViewById(R.id.textView_sub_id);
-        tv_subject_dob = findViewById(R.id.textView_sub_dob);
-        tv_subject_gender = findViewById(R.id.textView_sub_gender);
-        tv_subject_education = findViewById(R.id.textView_sub_education);
-        tv_subject_employment_status = findViewById(R.id.textView_sub_employment_status);
-        tv_subject_smoking_status = findViewById(R.id.textView_sub_smoking_status);
-        tv_subject_alcohol_consumption = findViewById(R.id.textView_sub_alcohol_consumption);
-        tv_subject_family_members = findViewById(R.id.textView_sub_family_members);
-        tv_subject_primary_caregiver = findViewById(R.id.textView_sub_primary_caregiver);
-
-        bt_back = findViewById(R.id.button_back);
+//        tv_subject_initial = findViewById(R.id.textView_sub_initial);
+//        tv_subject_id = findViewById(R.id.textView_sub_id);
+//        tv_subject_dob = findViewById(R.id.textView_sub_dob);
+//        tv_subject_gender = findViewById(R.id.textView_sub_gender);
+//        tv_subject_education = findViewById(R.id.textView_sub_education);
+//        tv_subject_employment_status = findViewById(R.id.textView_sub_employment_status);
+//        tv_subject_smoking_status = findViewById(R.id.textView_sub_smoking_status);
+//        tv_subject_alcohol_consumption = findViewById(R.id.textView_sub_alcohol_consumption);
+//        tv_subject_family_members = findViewById(R.id.textView_sub_family_members);
+//        tv_subject_primary_caregiver = findViewById(R.id.textView_sub_primary_caregiver);
+//
+//        bt_back = findViewById(R.id.button_back);
         bt_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

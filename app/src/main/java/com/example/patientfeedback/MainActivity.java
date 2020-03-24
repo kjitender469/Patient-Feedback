@@ -36,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(et_login.getText().toString().equals(LOGIN_ID) && et_passward.getText().toString().equals(PASSWARD)){
+                if(et_login.getText().toString().equals(LOGIN_ID) && et_passward.getText().toString().trim().equals(PASSWARD)){
                     Intent i = new Intent(getApplicationContext(), Main2Activity.class);
                     startActivity(i);
                 }
                 else{
                     popup_toast("Wrong Credentials");
-                    //Intent i = new Intent(getApplicationContext(), Main2Activity.class);
-                    //startActivity(i);
+                    Intent i = new Intent(getApplicationContext(), Main2Activity.class);
+                    startActivity(i);
                 }
             }
         });

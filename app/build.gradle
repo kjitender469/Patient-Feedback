@@ -67,4 +67,10 @@ dependencies {
 
     // Testing
     androidTestImplementation "androidx.arch.core:core-testing:$coreTestingVersion"
+
+    // dependencies for excel file handling
+    implementation 'org.apache.poi:poi:3.17'
+    //implementation 'org.apache.poi:poi-ooxml:3.17'
+
+    implementation 'gun0912.ted:tedpermission:2.2.3'
 }
