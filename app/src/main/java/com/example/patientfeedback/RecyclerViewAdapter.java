@@ -117,6 +117,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     key.add("Caregiver");
                     List<String> value = new ArrayList<>();
                     String subjectData = subjectCompleteInfo.get(position);
+                    subjectData = subjectData.substring(subjectData.indexOf('*')+1);
                     Log.wtf("debug","debug App subjectData (Original) is : "+subjectData);
 
                     String subString;

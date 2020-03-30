@@ -5,32 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/flamingo"
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/darker_gray"
-            tools:listitem="@layout/recyclerview_item"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Patient Feedback App"
             android:textAllCaps="false"
             android:textSize="32dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"
+            android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
             android:layout_marginBottom="5dp"/>
 
     </LinearLayout>
@@ -45,6 +37,7 @@
             android:layout_height="match_parent"
             android:text="Login ID : "
             android:textSize="20dp"
+            android:textColor="@color/colorPrimaryDark"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="5dp"/>
@@ -55,7 +48,10 @@
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="5dp"
+            android:textStyle="italic"
+            android:textColorHint="@color/olive_green"
+            android:hint="Enter here"/>
     </LinearLayout>
 
     <LinearLayout
@@ -68,6 +64,7 @@
             android:layout_height="match_parent"
             android:text="Passward : "
             android:textSize="20dp"
+            android:textColor="@color/colorPrimaryDark"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="5dp"/>
@@ -78,7 +75,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="5dp"
+            android:hint="Enter here"
+            android:textStyle="italic"
+            android:textColorHint="@color/olive_green"/>
 
     </LinearLayout>
 

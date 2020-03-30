@@ -6,4 +6,15 @@
 
     <color name="buttonLabel">#d3d3d3</color>
 
+    <color name="textColor">#CCB81F</color>
+    <!-- <color name="olive_green">#E4618F30</color> -->
+    <color name="olive_green">#E478925B</color>
+    <color name="pool_party">#3BD8AC</color>
+    <color name="pretty_peacock">#054B37</color>
+    <!-- <color name="flamingo">#F1AAA5</color> -->
+    <color name="flamingo">#EBB8B4</color>
+    <color name="border_color">#0323CC</color>
+    <color name="dashboard_background">#30A3AD</color>
+    <color name="dashboard_text_color">#FFFFFF</color>
+
 </resources>

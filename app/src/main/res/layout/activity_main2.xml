@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Main2Activity">
+    tools:context=".Main2Activity"
+    android:background="@color/flamingo">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Patient Information"
+            android:textColor="@color/colorAccent"
             android:textSize="20dp"/>
 
     </LinearLayout>
@@ -613,14 +615,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
                 <Button
                     android:id="@+id/button_save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="40dp"
+                    android:layout_gravity="center"
                     android:text="Save"/>
+                <!--
                 <Button
                     android:id="@+id/button_submit"
                     android:layout_width="wrap_content"
@@ -634,6 +636,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_gravity="right"
                     android:text="NEXT"/>
+                -->
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

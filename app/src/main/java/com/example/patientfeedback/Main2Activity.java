@@ -20,6 +20,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Main2Activity extends AppCompatActivity implements AsyncResponse{
@@ -73,9 +76,9 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
         rb_occasional_drinker = (RadioButton)findViewById(R.id.radioButton_Occasional_drinker);
         rb_alcoholic = (RadioButton)findViewById(R.id.radioButton_Alcoholic);
 
-        bt_next = (Button)findViewById(R.id.button_next);
+        //bt_next = (Button)findViewById(R.id.button_next);
         bt_save = (Button)findViewById(R.id.button_save);
-        bt_submit = (Button)findViewById(R.id.button_submit);
+        //bt_submit = (Button)findViewById(R.id.button_submit);
 
         new GetDataFromDB().execute();
 
@@ -89,23 +92,23 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
             }
         });
 
-        bt_submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        bt_submit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
-            }
-        });
-
-        bt_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //setContentView(R.layout.subject_complete_info);
-                User user = new User();
-                ExportDataExcel exportDataExcel = new ExportDataExcel(user, getApplicationContext());
-                exportDataExcel.exportExcelFile();
-                //exportDataExcel.saveToExternalStorage("");
-            }
-        });
+//        bt_next.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //setContentView(R.layout.subject_complete_info);
+//                User user = new User();
+//                ExportDataExcel exportDataExcel = new ExportDataExcel(user, getApplicationContext());
+//                exportDataExcel.exportExcelFile();
+//                //exportDataExcel.saveToExternalStorage("");
+//            }
+//        });
     }
 
     private void openDialogBox() {
@@ -113,7 +116,7 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Main2Activity.this);
         // set dialog message
         alertDialogBuilder
-                .setMessage("Do you want to save?")
+                .setMessage("Do you want to save this entry?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -143,18 +146,46 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
     public void getSubjectInfo(){
         subject_initial = et_subject_initial.getText().toString();
         //subject_id = et_subject_id.getText().toString();
-        Log.wtf("Debug","This log info is just to provide some delay --> subject_initial is : "+subject_initial);
+        //Log.wtf("Debug","This log info is just to provide some delay --> subject_initial is : "+subject_initial);
         subject_dob = et_dob.getText().toString();
-        Log.wtf("Debug","This log info is just to provide some delay --> subject_dob is : "+subject_dob);
+        //Log.wtf("Debug","This log info is just to provide some delay --> subject_dob is : "+subject_dob);
         subject_family_members = et_members.getText().toString();
-        Log.wtf("Debug","This log info is just to provide some delay --> subject_family is : "+subject_family_members);
+        //Log.wtf("Debug","This log info is just to provide some delay --> subject_family is : "+subject_family_members);
         subject_caregiver = et_caregiver.getText().toString();
-        Log.wtf("Debug","This log info is just to provide some delay --> subject_caregiver is : "+subject_caregiver);
-        Log.wtf("debug","debug App subject_id before ID count : "+subject_id);
-        Log.wtf("debug","debug App subjectID_count before ID count : "+subjectID_count);
+        //Log.wtf("Debug","This log info is just to provide some delay --> subject_caregiver is : "+subject_caregiver);
+        //Log.wtf("debug","debug App subject_id before ID count : "+subject_id);
+        //Log.wtf("debug","debug App subjectID_count before ID count : "+subjectID_count);
         subject_id = String.valueOf(subjectID_count+1);
-        Log.wtf("debug","debug App subject_id after ID count : "+subject_id);
-        subject_all_data = ","+subject_id+","+subject_initial+","+subject_dob+","+subject_gender+","+subject_education+","
+        //Log.wtf("debug","debug App subject_id after ID count : "+subject_id);
+
+        Date date = Calendar.getInstance().getTime();
+        //Log.wtf("debug","debug Date : "+date);
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = df.format(date);
+        //Log.wtf("debug","debug Date Formatted : "+formattedDate);
+
+        int index;
+        index = formattedDate.indexOf('-');
+        String startDate_date = formattedDate.substring(0, index);
+
+        String sub_string = formattedDate.substring(index+1);
+        //Log.wtf("Debug","debug App download entries sub_string : "+sub_string);
+        index = sub_string.indexOf('-');
+        String startDate_month = sub_string.substring(0, index);
+        String startDate_year = sub_string.substring(index + 1);
+
+        if(startDate_date.length() == 1)
+            startDate_date = "0"+startDate_date;
+        if(startDate_month.length() == 1)
+            startDate_month = "0"+startDate_month;
+
+        String date_final = startDate_date+startDate_month+startDate_year+"*";
+
+        //Log.wtf("Debug","debug App download entries date : "+startDate_date);
+        //Log.wtf("Debug","debug App download entries month : "+startDate_month);
+        //Log.wtf("Debug","debug App download entries year : "+startDate_year);
+
+        subject_all_data = date_final+","+subject_id+","+subject_initial+","+subject_dob+","+subject_gender+","+subject_education+","
                 +subject_employment_status+","+subject_smoking_status+","+subject_alcohol_consumption+","+subject_family_members
                 +","+subject_caregiver+",";
         //showToast(subject_final_data);
@@ -224,7 +255,7 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Main2Activity.this);
         // set dialog message
         alertDialogBuilder
-                .setMessage("Delete all saved data?")
+                .setMessage("Clear all data?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -236,7 +267,7 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        showToast("Database Cleared Successfully");
+                                        showToast("Cleared Successfully");
                                     }
                                 });
                             }
@@ -401,16 +432,17 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
     @Override
     public void processFinish(List<User> users) {
         String data = users.get(users.size()-1).getSubjectData();
+        data = data.substring(data.indexOf('*')+1);
         String sub_string = data.substring(1);
         int commaIndex = sub_string.indexOf(',');
-        Log.wtf("debug","debug App : "+data);
-        Log.wtf("debug","debug App sub_string : "+sub_string);
-        Log.wtf("debug","debug App data length : "+data.length());
-        Log.wtf("debug","debug App commaIndex : "+commaIndex);
+//        Log.wtf("debug","debug App : "+data);
+//        Log.wtf("debug","debug App sub_string : "+sub_string);
+//        Log.wtf("debug","debug App data length : "+data.length());
+//        Log.wtf("debug","debug App commaIndex : "+commaIndex);
         //Log.wtf("debug","debug App sub string is : "+data.substring(1, commaIndex));
 
         subjectID_count = Integer.parseInt(sub_string.substring(0,commaIndex));
-        Log.wtf("debug","debug App ID count : "+subjectID_count);
+        //Log.wtf("debug","debug App ID count : "+subjectID_count);
     }
 
     class saveData extends AsyncTask<Void, Void, Void>{
@@ -453,12 +485,12 @@ public class Main2Activity extends AppCompatActivity implements AsyncResponse{
             super.onPostExecute(users);
             if(users.size() != 0) {
                 isDatabaseEmpty = false;
-                Log.wtf("debug","debug App (inside if) : "+users.size());
+                //Log.wtf("debug","debug App (inside if) : "+users.size());
                 processFinish(users);
             }
             else{
                 isDatabaseEmpty = true;
-                Log.wtf("debug","debug App (inside else) : "+users.size());
+                //Log.wtf("debug","debug App (inside else) : "+users.size());
             }
         }
     }
