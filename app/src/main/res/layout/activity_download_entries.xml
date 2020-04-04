@@ -22,13 +22,15 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:text="Start Date :"/>
+            android:text="Start Date :"
+            android:textColor="@color/colorAccent"/>
         <EditText
             android:id="@+id/editText_startDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="date"
-            android:hint="Eg : 12/12/2020"
+            android:hint=" DD/MM/YYYY"
+            android:textColor="@color/olive_green"
             android:textStyle="italic"/>
     </LinearLayout>
     <!-- layout 2 -->
@@ -40,14 +42,16 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:text="End Date   :"/>
+            android:text="End Date   :"
+            android:textColor="@color/colorAccent"/>
         <EditText
             android:id="@+id/editText_endDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="date"
             android:textStyle="italic"
-            android:hint="Eg : 12/12/2020"/>
+            android:textColor="@color/olive_green"
+            android:hint=" DD/MM/YYYY"/>
     </LinearLayout>
     <!-- layout 3 -->
     <LinearLayout
